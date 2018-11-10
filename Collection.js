@@ -1,4 +1,4 @@
-export default class Collection{
+module.exports = class Collection{
   constructor(name){
     this.name = name;
     this.documents = [];
@@ -6,23 +6,23 @@ export default class Collection{
     this.lastChange = new Date();
   }
 
-  getName = () => {
+  getName(){
     return this.name;
   };
 
-  getDocumentsCount = () => {
+  getDocumentsCount(){
     return this.documents.length;
   };
 
-  getCreationTime = () => {
+  getCreationTime(){
     return this.creationTime;
   };
 
-  getLastChangeTime = () => {
+  getLastChangeTime(){
     return this.lastChange;
   };
 
-  find = (query, filter) => {
+  find(query, filter){
     const result = this.documents.filter(document => this.matchQuery(document, query));
     if (filter && Object.keys(filter) > 0) {
       return result.map(document => {
@@ -35,7 +35,7 @@ export default class Collection{
     } else return result;
   };
 
-  findOne = (query, filter) => {
+  findOne(query, filter){
     for (const document of this.documents){
       if (this.matchQuery(document, query)) {
         if (!filter) {
@@ -52,7 +52,7 @@ export default class Collection{
     return null;
   }
 
-  findById = (id, filter) => {
+  findById(id, filter){
     for (const document of this.documents){
       if (document.id === id && !filter) {
         return document;
@@ -67,7 +67,7 @@ export default class Collection{
     return null;
   }
 
-  validate = (data) => {
+  validate(data){
     if (Object.keys(data).length !== Object.keys(this.documents[0]).length) return false;
     Object.keys(this.documents[0]).forEach(key => {
       if (!data.hasOwnProperty(key)) return false;
@@ -75,19 +75,19 @@ export default class Collection{
     return true;
   };
 
-  insertOne = (data) => {
+  insertOne(data) {
     if (!this.validate(data)) throw new Error('Invalid Object');
     this.documents.push(Object.assign({ id: this.documents.length }, data))
   };
 
-  insertMany = (dataSet) => {
+  insertMany (dataSet)  {
     dataSet.forEach((data) => {
       if (!this.validate(data)) throw new Error('Invalid Object');
       this.documents.push(Object.assign({ id: this.documents.length }, data))
     })
   };
 
-  deleteOne = (query) => {
+  deleteOne(query) {
     for (let i = 0; i<this.documents.length; i++){
       if (this.matchQuery(this.documents[i], query)) {
         this.documents.splice(i, 1);
@@ -96,18 +96,18 @@ export default class Collection{
     }
   };
 
-  deleteMany = (query) => {
+  deleteMany(query){
     this.documents = this.documents.filter(document => !this.matchQuery(document, query))
   };
 
-  matchQuery = (document, query) => {
+  matchQuery(document, query){
     for (const key in query) {
       if (document[key] !== query[key]) return false;
     }
     return true;
   };
 
-  updateOne = (query) => {
+  updateOne(query){
     for (const document of this.documents){
       if (this.matchQuery(document)){
         for (const key in query){
@@ -118,7 +118,7 @@ export default class Collection{
     }
   };
 
-  updateMany = (query) => {
+  updateMany(query) {
     for (const document of this.documents){
       if (this.matchQuery(document)){
         for (const key in query){
@@ -129,4 +129,4 @@ export default class Collection{
     return this.documents.filter(document => this.matchQuery(document, query))
   }
 
-}
+};

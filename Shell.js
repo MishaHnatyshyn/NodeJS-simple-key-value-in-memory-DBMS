@@ -1,7 +1,8 @@
 const readline = require('readline');
 
-export default class Shell {
-  constructor(){
+module.exports = class Shell {
+  constructor(db){
+    this.db = db;
      this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout
@@ -11,7 +12,7 @@ export default class Shell {
        collection: '',
        command: '',
        body: ''
-     }
+     };
      this.regexp = {
        collectionCommand: /^[a-z]+\.[a-z]+\(.*\)$/,
        shellCommand: /^[a-z]+\(.*\)$/
@@ -46,13 +47,15 @@ export default class Shell {
       indexLast = input.indexOf(')', indexFirst);
       this.state.body = input.substring(indexFirst, indexLast);
       console.dir(this.state);
+      this.db.handleCollectionCommand(this.state.command, this.state.body, this.state.collection)
     } else if (input.search(shellCommand) > -1){
         indexLast = input.indexOf('(', indexFirst);
         this.state.command = input.substring(indexFirst, indexLast);
         indexFirst = indexLast + 1;
         indexLast = input.indexOf(')');
         this.state.collection = input.substring(indexFirst, indexLast);
-        console.dir(this.state);
+        this.db.handleDBCommand(this.state.command, this.state.collection);
+      console.dir(this.state);
     } else {
       console.log('wrong command');
     }
