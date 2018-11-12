@@ -1,67 +1,47 @@
 const readline = require('readline');
+const shellParser = require('./ShellParser');
 
 module.exports = class Shell {
   constructor(db){
+    let state = {};
+    this.getState = () => Object.assign({}, state);
+    this.setState = newState => { state = newState };
+
     this.db = db;
-     this.rl = readline.createInterface({
+
+    this.rl = readline.createInterface({
       input: process.stdin,
-      output: process.stdout
+      output: process.stdout,
+      prompt: '> '
     });
-     this.state = {
-       input: '',
-       collection: '',
-       command: '',
-       body: ''
-     };
-     this.regexp = {
-       collectionCommand: /^[a-z]+\.[a-z]+\(.*\)$/,
-       shellCommand: /^[a-z]+\(.*\)$/
-     }
+
+     this.rl.on('line', line => {
+       line = line.trim();
+       if(line === "exit"){
+         this.rl.close();
+       } else {
+         console.dir(line);
+         this.setState({input: line});
+         this.checkCommand();
+         this.rl.prompt();
+       }
+     });
   };
 
-  readLine(){
-      this.rl.question('', (answer) => {
-        if(answer === "exit"){
-          this.rl.close();
-        } else {
-          console.dir(answer);
-          this.state.input = answer;
-          this.parse();
-          this.readLine();
-        }
-      });
-  };
-
-  parse(){
-    const { input } = this.state;
-    const { collectionCommand, shellCommand } = this.regexp;
-    let indexFirst = 0;
-    let indexLast = 0;
-    if(input.search(collectionCommand) > -1){
-      indexLast = input.indexOf('.', indexFirst);
-      this.state.collection = input.substring(indexFirst, indexLast);
-      indexFirst = indexLast + 1;
-      indexLast = input.indexOf('(', indexFirst);
-      this.state.command = input.substring(indexFirst, indexLast);
-      indexFirst = indexLast + 1;
-      indexLast = input.indexOf(')', indexFirst);
-      this.state.body = input.substring(indexFirst, indexLast);
-      console.dir(this.state);
-      this.db.handleCollectionCommand(this.state.command, this.state.body, this.state.collection)
-    } else if (input.search(shellCommand) > -1){
-        indexLast = input.indexOf('(', indexFirst);
-        this.state.command = input.substring(indexFirst, indexLast);
-        indexFirst = indexLast + 1;
-        indexLast = input.indexOf(')');
-        this.state.collection = input.substring(indexFirst, indexLast);
-        this.db.handleDBCommand(this.state.command, this.state.collection);
-      console.dir(this.state);
+  checkCommand(){
+    this.setState(shellParser(this.getState().input));
+    const state = this.getState();
+    
+    if(state.case === 1) {
+      this.db.handleCollectionCommand(state.command, state.body, state.collection)
+    } else if (state.case === 2) {
+      this.db.handleDBCommand(state.command, state.collection);
     } else {
       console.log('wrong command');
     }
-  }
+  };
 
   listen(){
-    this.readLine();
-  }
+    this.rl.prompt();
+  };
 };

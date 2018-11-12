@@ -12,12 +12,14 @@ module.exports = class DB{
   handleCollectionCommand(command, data, collection){
     this.collections.forEach(item => {
       if (item.getName() === collection) {
-        collection[command](data);
+        console.log('handleCollectionCommand', 'command: ' + command, 'data: ' + data, 'collection: ' + collection);
+        if (command in item) item[command](JSON.parse(data));
       }
     })
   };
 
   handleDBCommand(command, collection){
+    console.log('handleDBCommand', 'command: ' + command, 'collection: ' + collection);
     this[command](collection);
   };
 
