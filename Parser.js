@@ -9,10 +9,11 @@ const chooseType = string => (
   +string || string === 'true' || string === 'false' || string
 );
 
-export default class Parser1{
-  parseToObject = str => {
+class Parser{
+  parseToObject(str) {
+    if (typeof str !== 'string') return;
     const res = {};
-    str = str.trim().replace(/[{}]/g);
+    str = str.trim().replace(/[{}]/g, '');
     if (str.includes(',')){
       const arr = str.split(',');
       arr.forEach((item, i)=>{
@@ -21,8 +22,11 @@ export default class Parser1{
       })
     } else {
       let temp = str.split(':');
-      res[temp[0]] = chooseType(temp[1])
+      res[temp[0].trim()] = chooseType(temp[1].trim());
     }
     return res;
   }
 }
+
+const Parser1 = new Parser();
+console.dir(Parser1.parseToObject('{a: b}'));
