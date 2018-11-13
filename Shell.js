@@ -31,7 +31,7 @@ module.exports = class Shell {
   checkCommand(){
     this.setState(shellParser(this.getState().input));
     const state = this.getState();
-    
+
     if(state.case === 1) {
       this.db.handleCollectionCommand(state.command, state.body, state.collection)
     } else if (state.case === 2) {

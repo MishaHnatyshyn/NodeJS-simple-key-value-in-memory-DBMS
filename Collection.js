@@ -1,3 +1,5 @@
+const Document = require('./Document');
+
 module.exports = class Collection{
   constructor(name){
     this.name = name;
@@ -111,7 +113,7 @@ module.exports = class Collection{
     for (const document of this.documents){
       if (this.matchQuery(document)){
         for (const key in query){
-          if (document.hasOwnProperty(key)) document[key] = query[key];
+          if (query.hasOwnProperty(key)) document[key] = query[key];
         }
         return document;
       }

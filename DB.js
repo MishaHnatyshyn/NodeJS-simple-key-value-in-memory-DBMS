@@ -25,7 +25,7 @@ module.exports = class DB{
 
   drop(name){
     for (let i = 0; i < this.collections.length; i++){
-      if(collection[i].getName() === name) {
+      if(this.collections[i].getName() === name) {
         this.collections.splice(i, 1);
         break;
       }
