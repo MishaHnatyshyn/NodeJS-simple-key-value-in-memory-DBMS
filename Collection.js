@@ -130,5 +130,4 @@ module.exports = class Collection{
     }
     return this.documents.filter(document => this.matchQuery(document, query))
   }
-
 };

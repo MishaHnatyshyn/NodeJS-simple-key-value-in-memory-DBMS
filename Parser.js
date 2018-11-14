@@ -1,10 +1,3 @@
-//GavnoCode
-// export default class Parser{
-//   getKeys = (string) => Object.keys(JSON.parse(string));
-//   getValues = (string) => Object.values(JSON.parse(string));
-//   parseToObject = (string) => JSON.parse(string);
-// }
-
 const chooseType = string => (
   +string || string === 'true' || string === 'false' || string
 );
@@ -16,9 +9,9 @@ class Parser{
     str = str.trim().replace(/[{}]/g, '');
     if (str.includes(',')){
       const arr = str.split(',');
-      arr.forEach((item, i)=>{
+      arr.forEach((item)=>{
         let temp = item.split(':');
-        res[temp[0]] = chooseType(temp[1])
+        res[temp[0].trim()] = chooseType(temp[1].trim())
       })
     } else {
       let temp = str.split(':');
@@ -29,4 +22,4 @@ class Parser{
 }
 
 const Parser1 = new Parser();
-console.dir(Parser1.parseToObject('{a: b}'));
+console.dir(Parser1.parseToObject('{a: b, b : 3, a: 3}'));

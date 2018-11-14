@@ -1,4 +1,4 @@
-module.exports = class Document {
+class Document {
   constructor(identifier, newData) {
     const data = {
       id: identifier
@@ -23,3 +23,5 @@ module.exports = class Document {
     }
   }
 };
+
+module.exports = Document;
